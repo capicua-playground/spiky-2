@@ -1,0 +1,24 @@
+// Prisma schema file — https://pris.ly/d/prisma-schema
+//
+// Getting started:
+//   1. Set DATABASE_URL in .env.local (never commit it)
+//   2. Define your models below
+//   3. Run: pnpm prisma migrate dev --name init
+//
+// Notes for Prisma 7:
+//   - The datasource URL lives in prisma.config.ts (not here)
+//   - The PrismaClient is instantiated with an adapter in src/lib/db.ts
+//   - The generated client lives in src/generated/prisma — always import via @/lib/db
+//
+// The singleton is in src/lib/db.ts. Always import `db` from there.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Define your models below this line.
