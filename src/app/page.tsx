@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { SoupedLogo } from "@/components/landing/souped-logo";
 
 // ─── Color tokens (from wireframe-style.md) ───────────────────────────────
 const C = {
@@ -241,26 +242,8 @@ function NavSection() {
           justifyContent: "space-between",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div
-            style={{
-              width: 28,
-              height: 28,
-              background: C.navyMid,
-              border: `1px solid ${C.cyanDim}`,
-              borderRadius: 4,
-            }}
-          />
-          <span
-            style={{
-              fontFamily: "system-ui, -apple-system, sans-serif",
-              fontSize: 15,
-              fontWeight: 600,
-              color: C.white,
-            }}
-          >
-            SOUPED
-          </span>
+        <div style={{ color: C.white }}>
+          <SoupedLogo className="h-6 w-auto" />
         </div>
         <div
           style={{
