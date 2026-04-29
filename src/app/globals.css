@@ -5,6 +5,15 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* Blueprint colors → Tailwind utilities (bg-bp-*, text-bp-*, border-bp-*) */
+  --color-bp-page:     var(--bp-page);
+  --color-bp-navy:     var(--bp-navy);
+  --color-bp-navy-mid: var(--bp-navy-mid);
+  --color-bp-nav:      var(--bp-nav);
+  --color-bp-status:   var(--bp-status);
+  --color-bp-cyan:     var(--bp-cyan);
+  --color-bp-orange:   var(--bp-orange);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -128,6 +137,81 @@
   --souped-accent-alt: #ff6600;
   --souped-accent-warm: #ffbb33;
   --souped-accent-blue: #3314dc;
+
+  /* Blueprint wireframe tokens */
+  --bp-page:      #00214d;
+  --bp-navy:      #0d2060;
+  --bp-navy-mid:  #142878;
+  --bp-nav:       #002b63;
+  --bp-status:    #002255;
+  --bp-cyan:      #7ec8e3;
+  --bp-orange:    #FF6B35;
+}
+
+/* ── Blueprint utility classes ─────────────────────────────────────────────
+   Use these on any page — no need to re-declare colors or patterns.        */
+
+.bp-grid {
+  background-color: var(--bp-page);
+  background-image:
+    linear-gradient(rgba(100,160,255,0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100,160,255,0.14) 1px, transparent 1px),
+    linear-gradient(rgba(100,160,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100,160,255,0.05) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+}
+
+.bp-banner {
+  background: linear-gradient(to right, #080025 30%, var(--bp-orange) 100%);
+  border-bottom: 1px solid rgba(255,107,53,0.15);
+}
+
+.bp-label-bar {
+  background: rgba(126,200,227,0.06);
+  border-bottom: 1px solid rgba(126,200,227,0.30);
+}
+
+.bp-section {
+  background: rgba(13,32,96,0.25);
+  border: 1px solid rgba(126,200,227,0.30);
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 3px 8px;
+}
+
+.bp-card {
+  background: rgba(126,200,227,0.10);
+  border: 1px solid rgba(126,200,227,0.30);
+  border-radius: 6px;
+}
+
+.bp-code-block {
+  background: rgba(126,200,227,0.10);
+  border: 1px solid rgba(126,200,227,0.30);
+  border-radius: 6px;
+}
+
+.bp-tag {
+  background: rgba(126,200,227,0.12);
+  border: 1px solid rgba(126,200,227,0.30);
+  border-radius: 3px;
+}
+
+.bp-btn-primary {
+  background: var(--bp-cyan);
+  color: var(--bp-navy);
+  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: default;
+}
+
+.bp-btn-secondary {
+  background: transparent;
+  border: 1.5px solid rgba(126,200,227,0.30);
+  color: var(--bp-cyan);
+  border-radius: 4px;
+  cursor: default;
 }
 
 @layer base {
