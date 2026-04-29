@@ -473,24 +473,6 @@ function TopBanner({ device, setDevice }: { device: Device; setDevice: (d: Devic
         >
           Structure Preview
         </span>
-        {[
-          "Click nav links to browse pages",
-          "Approve in Claude Code to begin the full build",
-          "This page will be deleted automatically",
-        ].map((msg) => (
-          <span
-            key={msg}
-            style={{
-              fontFamily: '"JetBrains Mono", "Fira Mono", monospace',
-              fontSize: 11,
-              color: "rgba(255,255,255,0.5)",
-              letterSpacing: "0.04em",
-              whiteSpace: "nowrap",
-            }}
-          >
-            · {msg}
-          </span>
-        ))}
       </div>
       <div
         style={{
