@@ -517,7 +517,7 @@ export default function Home() {
 
   const isDesktop = device === "desktop";
   const frameWidth = isDesktop ? 1100 : device === "tablet" ? 768 : 390;
-  const frameRadius = isDesktop ? 0 : device === "mobile" ? 44 : 20;
+  const frameRadius = isDesktop ? 0 : device === "mobile" ? 20 : 10;
   const statusBarH = device === "mobile" ? 44 : device === "tablet" ? 32 : 0;
 
   return (
