@@ -168,7 +168,7 @@ function PageContent({ device }: { device: Device }) {
           ].map(({ step, cmd, desc }) => (
             <div key={step} className="bp-card p-5 flex flex-col gap-3">
               <span className="font-mono text-[28px] font-bold text-bp-cyan/30 leading-none">{step}</span>
-              <code className="font-mono text-[11px] text-bp-cyan bg-bp-cyan/10 border border-bp-cyan/20 rounded px-2 py-1 w-fit">
+              <code className="font-mono text-[11px] text-bp-cyan bg-bp-cyan/10 border border-bp-cyan/20 rounded-[3px] px-2 py-1 w-fit">
                 {cmd}
               </code>
               <p className="text-[12px] text-white/45 leading-snug">{desc}</p>
@@ -196,7 +196,7 @@ function TopBanner({ device, setDevice }: { device: Device; setDevice: (d: Devic
           Structure Preview
         </span>
       </div>
-      <div className="flex gap-0.5 shrink-0 bg-black/25 rounded p-0.5">
+      <div className="flex gap-0.5 shrink-0 bg-black/25 rounded-[3px] p-0.5">
         {(["desktop", "tablet", "mobile"] as Device[]).map((d) => (
           <button
             key={d}
