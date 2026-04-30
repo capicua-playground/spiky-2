@@ -110,23 +110,32 @@ function PageContent({ device }: { device: Device }) {
     <div>
       <NavSection />
 
-      <Section tag="hero" desc="Badge pill. Headline, subheadline, 2 CTAs." compact={isMobile}>
-        <div className="inline-flex px-3.5 py-0.5 border border-bp-cyan/30 rounded-full mb-5">
-          <span className="text-[11px] text-white/35 uppercase tracking-widest">Souped Boilerplate</span>
-        </div>
-        <h1
-          className="font-bold text-white leading-[1.1] mb-3.5"
-          style={{ fontSize: isMobile ? 32 : 50 }}
-        >
-          A Next.js starter, pre-seasoned with the Souped stack.
-        </h1>
-        <p className="text-lg text-white/55 leading-relaxed mb-7 max-w-[560px]">
-          TypeScript, Tailwind v4, shadcn/ui, Prisma, and Souped auth — wired and ready.
-          Set one env var to turn on login; leave it off to build freely.
-        </p>
-        <div className="flex flex-wrap gap-2.5">
-          <Btn label="Sign in with Souped" primary />
-          <Btn label="Souped dashboard" />
+      <Section tag="hero" desc="Badge pill. Headline, subheadline, 2 CTAs. Side-by-side image." compact={isMobile}>
+        <div className={`flex gap-10 ${isMobile ? "flex-col" : "flex-row items-center"}`}>
+          {/* Text column */}
+          <div className="flex-1 min-w-0">
+            <div className="inline-flex px-3.5 py-0.5 border border-bp-cyan/30 rounded-full mb-5">
+              <span className="text-[11px] text-white/35 uppercase tracking-widest">Souped Boilerplate</span>
+            </div>
+            <h1
+              className="font-bold text-white leading-[1.1] mb-3.5"
+              style={{ fontSize: isMobile ? 32 : 50 }}
+            >
+              Skip the setup.<br />Start building.
+            </h1>
+            <p className="text-lg text-white/55 leading-relaxed mb-7">
+              TypeScript, Tailwind, Prisma, shadcn/ui — all set. Flip one env var to add login.
+            </p>
+            <div className="flex flex-wrap gap-2.5">
+              <Btn label="Sign in with Souped" primary />
+              <Btn label="Souped dashboard" />
+            </div>
+          </div>
+
+          {/* Image column */}
+          <div className={isMobile ? "w-full" : "w-[45%] shrink-0"}>
+            <Photo height={isMobile ? 200 : 340} label="hero image" />
+          </div>
         </div>
       </Section>
 
@@ -149,19 +158,22 @@ function PageContent({ device }: { device: Device }) {
         </div>
       </Section>
 
-      <Section tag="quickstart" desc="4-step setup commands. Monospace code block." compact={isMobile}>
-        <div className="bp-code-block p-5">
-          <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-white/35 mb-3.5">
-            Quickstart
-          </div>
-          {["pnpm install", "cp .env.example .env.local", "pnpm prisma migrate dev", "pnpm dev"].map(
-            (line) => (
-              <div key={line} className="flex items-center gap-2.5 mb-2">
-                <span className="font-mono text-[11px] text-bp-cyan/50">$</span>
-                <span className="font-mono text-[11px] text-white/65">{line}</span>
-              </div>
-            )
-          )}
+      <Section tag="quickstart" desc="4-step setup. Each step is a card." compact={isMobile}>
+        <div className={`grid gap-4 ${isMobile ? "grid-cols-1" : "grid-cols-4"}`}>
+          {[
+            { step: "01", cmd: "pnpm install",               desc: "Install dependencies and generate the Prisma client" },
+            { step: "02", cmd: "cp .env.example .env.local", desc: "Copy the env template and fill in your DATABASE_URL" },
+            { step: "03", cmd: "pnpm prisma migrate dev",    desc: "Run migrations once your database is up" },
+            { step: "04", cmd: "pnpm dev",                   desc: "Start the dev server at localhost:3000" },
+          ].map(({ step, cmd, desc }) => (
+            <div key={step} className="bp-card p-5 flex flex-col gap-3">
+              <span className="font-mono text-[28px] font-bold text-bp-cyan/30 leading-none">{step}</span>
+              <code className="font-mono text-[11px] text-bp-cyan bg-bp-cyan/10 border border-bp-cyan/20 rounded px-2 py-1 w-fit">
+                {cmd}
+              </code>
+              <p className="text-[12px] text-white/45 leading-snug">{desc}</p>
+            </div>
+          ))}
         </div>
       </Section>
 
