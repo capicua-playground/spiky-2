@@ -124,7 +124,7 @@ function PageContent({ device }: { device: Device }) {
               Skip the setup.<br />Start building.
             </h1>
             <p className="text-lg text-white/55 leading-relaxed mb-7">
-              TypeScript, Tailwind, Prisma, shadcn/ui — all set. Flip one env var to add login.
+              Full stack, zero config. Auth is one env var away.
             </p>
             <div className="flex flex-wrap gap-2.5">
               <Btn label="Sign in with Souped" primary />
