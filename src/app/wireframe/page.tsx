@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { SoupedLogo } from "@/components/landing/souped-logo";
 
 type Device = "desktop" | "tablet" | "mobile";
 
@@ -91,9 +90,7 @@ function NavSection() {
       style={{ background: "var(--bp-nav)" }}
     >
       <div className="flex items-center justify-between px-7 py-3.5">
-        <div className="text-white">
-          <SoupedLogo className="h-6 w-auto" />
-        </div>
+        <span className="text-base font-semibold text-white">SOUPED</span>
         <div className="px-3.5 py-1 border border-bp-cyan/30 rounded-full">
           <span className="text-[11px] text-white/35 uppercase tracking-wider">Auth: off</span>
         </div>
@@ -112,7 +109,6 @@ function PageContent({ device }: { device: Device }) {
 
       <Section tag="hero" desc="Badge pill. Headline, subheadline, 2 CTAs. Side-by-side image." compact={isMobile}>
         <div className={`flex gap-10 ${isMobile ? "flex-col" : "flex-row items-center"}`}>
-          {/* Text column */}
           <div className="flex-1 min-w-0">
             <div className="inline-flex px-3.5 py-0.5 border border-bp-cyan/30 rounded-full mb-5">
               <span className="text-[11px] text-white/35 uppercase tracking-widest">Souped Boilerplate</span>
@@ -131,8 +127,6 @@ function PageContent({ device }: { device: Device }) {
               <Btn label="Souped dashboard" />
             </div>
           </div>
-
-          {/* Image column */}
           <div className={isMobile ? "w-full" : "w-[45%] shrink-0"}>
             <Photo height={isMobile ? 200 : 340} label="hero image" />
           </div>
@@ -215,8 +209,8 @@ function TopBanner({ device, setDevice }: { device: Device; setDevice: (d: Devic
   );
 }
 
-// ─── Home page ────────────────────────────────────────────────────────────
-export default function Home() {
+// ─── Wireframe page ───────────────────────────────────────────────────────
+export default function WireframePage() {
   const [device, setDevice] = useState<Device>("desktop");
 
   const isDesktop = device === "desktop";
