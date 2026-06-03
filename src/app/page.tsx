@@ -15,7 +15,7 @@ function LandingContent({ device }: { device: Device }) {
   const isMobile = device === "mobile";
 
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       <WfNav />
 
       <WfSection
@@ -57,7 +57,7 @@ function LandingContent({ device }: { device: Device }) {
         desc="2-column card grid. Server action sample + API route sample."
         compact={isMobile}
       >
-        <div className={`grid gap-4 ${isMobile ? "grid-cols-1" : "grid-cols-2"}`}>
+        <div className={`grid gap-6 ${isMobile ? "grid-cols-1" : "grid-cols-2"}`}>
           <div className="wf-card p-5">
             <p className="text-lg font-bold text-white mb-2">Server actions, live demo</p>
             <p className="text-sm text-white/55 leading-relaxed mb-5">
@@ -88,7 +88,7 @@ function LandingContent({ device }: { device: Device }) {
       </WfSection>
 
       <WfSection tag="quickstart" desc="4-step setup. Each step is a card." compact={isMobile}>
-        <div className={`grid gap-4 ${isMobile ? "grid-cols-1" : "grid-cols-4"}`}>
+        <div className={`grid gap-6 ${isMobile ? "grid-cols-1" : "grid-cols-4"}`}>
           {[
             { step: "01", cmd: "pnpm install", desc: "Install dependencies and generate the Prisma client" },
             { step: "02", cmd: "cp .env.example .env.local", desc: "Copy the env template and fill in DATABASE_URL plus the SOUPED_* values if you want auth" },
