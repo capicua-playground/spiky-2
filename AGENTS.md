@@ -167,9 +167,9 @@ Reuse the `wf-*` utility classes (`wf-card`, `wf-grid`, `wf-tag`, etc.) and the 
 
 **When NOT to use them:** if the user has shared a design system, brand guidelines, mocks, or even just a clear visual direction ("hacelo minimalista en blanco y negro", "matchear con nuestra brand orange/black"), drop the wireframe look and build with shadcn/ui primitives + Tailwind. The wireframe is the *default*, not a mandate.
 
-#### Optional preview chrome
+#### Preview chrome
 
-`<WireframePreview>` wraps your wireframe content in a sticky "Structure Preview" banner with a desktop/tablet/mobile switcher and a device frame. Use it when you want a stakeholder to see how the layout reflows before any real styling lands; skip it (render `Wf*` blocks directly, as `src/app/page.tsx` does) when you only want the wireframe look without the preview UX.
+`<WireframePreview>` wraps wireframe content in a sticky "Structure Preview" banner with a desktop/tablet/mobile switcher and a centered 1100-px-wide device frame. The boilerplate's `src/app/page.tsx` uses it by default so the landing arrives with that chrome out of the box.
 
 ```tsx
 import { WireframePreview, WfSection, WfPhoto } from "@/components/wireframe";
@@ -186,6 +186,8 @@ export default function Page() {
   );
 }
 ```
+
+When **not** to use `<WireframePreview>`: any page that the user actually ships to end users (dashboards, app screens, post-launch landings). The banner labels the page as a preview and is not appropriate in production. For those cases, render `Wf*` blocks directly and constrain the width yourself — `<div className="wf-grid min-h-screen pb-16"><div className="mx-auto max-w-275">…</div></div>` is a reasonable default so the content doesn't stretch edge-to-edge on wide screens.
 
 ---
 

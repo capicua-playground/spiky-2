@@ -1,28 +1,39 @@
+"use client";
+
 import {
   WfButton,
   WfCard,
   WfNav,
   WfPhoto,
   WfSection,
+  WireframePreview,
 } from "@/components/wireframe";
 
-export default function Home() {
+type Device = "desktop" | "tablet" | "mobile";
+
+function LandingContent({ device }: { device: Device }) {
+  const isMobile = device === "mobile";
+
   return (
-    <div className="wf-grid min-h-screen pb-16">
+    <div>
       <WfNav />
 
       <WfSection
         tag="hero"
         desc="Badge pill. Headline, subheadline, 2 CTAs. Side-by-side image."
+        compact={isMobile}
       >
-        <div className="flex flex-col gap-10 md:flex-row md:items-center">
+        <div className={`flex gap-10 ${isMobile ? "flex-col" : "flex-row items-center"}`}>
           <div className="flex-1 min-w-0">
             <div className="inline-flex px-3.5 py-0.5 border border-wf-cyan/30 rounded-full mb-5">
               <span className="text-[11px] text-white/35 uppercase tracking-widest">
                 Souped Boilerplate
               </span>
             </div>
-            <h1 className="font-bold text-white leading-[1.1] mb-3.5 text-[32px] md:text-[50px]">
+            <h1
+              className="font-bold text-white leading-[1.1] mb-3.5"
+              style={{ fontSize: isMobile ? 32 : 50 }}
+            >
               Skip the setup.
               <br />
               Start building.
@@ -35,8 +46,8 @@ export default function Home() {
               <WfButton label="Souped dashboard" />
             </div>
           </div>
-          <div className="w-full md:w-[45%] md:shrink-0">
-            <WfPhoto height={340} label="hero image" />
+          <div className={isMobile ? "w-full" : "w-[45%] shrink-0"}>
+            <WfPhoto height={isMobile ? 200 : 340} label="hero image" />
           </div>
         </div>
       </WfSection>
@@ -44,8 +55,9 @@ export default function Home() {
       <WfSection
         tag="features"
         desc="2-column card grid. Server action sample + API route sample."
+        compact={isMobile}
       >
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <div className={`grid gap-4 ${isMobile ? "grid-cols-1" : "grid-cols-2"}`}>
           <WfCard
             title="Server actions, ready to go"
             body="Zod-validated, typed end-to-end. Drop your logic into src/actions/ and ship."
@@ -59,8 +71,8 @@ export default function Home() {
         </div>
       </WfSection>
 
-      <WfSection tag="quickstart" desc="4-step setup. Each step is a card.">
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-4">
+      <WfSection tag="quickstart" desc="4-step setup. Each step is a card." compact={isMobile}>
+        <div className={`grid gap-4 ${isMobile ? "grid-cols-1" : "grid-cols-4"}`}>
           {[
             { step: "01", cmd: "pnpm install", desc: "Install dependencies and generate the Prisma client" },
             { step: "02", cmd: "cp .env.example .env.local", desc: "Copy the env template and fill in your DATABASE_URL" },
@@ -86,5 +98,11 @@ export default function Home() {
         </span>
       </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <WireframePreview>{(device) => <LandingContent device={device} />}</WireframePreview>
   );
 }
