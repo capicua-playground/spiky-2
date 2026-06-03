@@ -80,9 +80,9 @@ Auth is wired but **inactive by default**. The boilerplate ships with the SDK in
    - `https://yourapp.com/api/auth/callback` (prod)
 4. In `.env.local`:
    ```env
-   # Glaze auth API URL — NOT the marketing site or dashboard.
-   # Prod: https://glaze.souped.app  |  Dev: https://glaze.dev.souped.app
-   SOUPED_URL=https://glaze.souped.app
+   # Glaze auth API URL — value comes from `glaze_get_project_auth_setup`
+   # (or the dashboard). Never the marketing site, never the dashboard host.
+   SOUPED_URL=...
    SOUPED_CLIENT_ID=souped_client_xxx
    SOUPED_CLIENT_SECRET=souped_secret_xxx
    SOUPED_APP_ID=...                # Souped project UUID
