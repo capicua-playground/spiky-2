@@ -20,7 +20,7 @@ All decisions below are fixed. Do not swap them without explicit user approval.
 | UI kit                          | `shadcn/ui` with `radix-nova` style, `neutral` base color              |
 | Icons                           | `lucide-react`                                                         |
 | DB                              | PostgreSQL via Prisma 7 (adapter-pg). Schema in `prisma/schema.prisma` |
-| Auth                            | `@souped-tools/auth-nextjs` — behind the `SOUPED_AUTH_ENABLED` flag    |
+| Auth                            | `@souped-tools/auth-nextjs` — gated by `config.matcher` in `src/proxy.ts` |
 | Testing                         | Vitest + React Testing Library + jsdom (70% coverage target)           |
 | Forms                           | `react-hook-form` + `zod` (add `react-hook-form` when needed)          |
 | Formatting                      | Prettier + `prettier-plugin-tailwindcss`                               |
@@ -50,14 +50,14 @@ All decisions below are fixed. Do not swap them without explicit user approval.
 │   │   ├── layout.tsx
 │   │   └── page.tsx
 │   ├── components/
-│   │   ├── landing/      ← marketing surfaces — use Souped brand tokens
+│   │   ├── wireframe/    ← Wf* blocks (default Souped look) + SoupedLogo
 │   │   └── ui/           ← shadcn components — DO NOT edit, regenerate via CLI
 │   ├── generated/        ← Prisma client — gitignored, auto-generated
 │   ├── hooks/            ← custom React hooks
 │   ├── lib/
 │   │   ├── db.ts         ← PrismaClient singleton — always import from here
 │   │   └── utils.ts      ← shadcn cn() helper
-│   ├── proxy.ts          ← Next 16 proxy (auth gate behind flag)
+│   ├── proxy.ts          ← Next 16 proxy (auth gate — populate `config.matcher` to enable)
 │   └── types/
 │       └── index.ts      ← shared types barrel
 └── vitest.config.ts
@@ -67,41 +67,38 @@ All decisions below are fixed. Do not swap them without explicit user approval.
 
 ## Enabling auth
 
-Auth is wired but **off by default**. The boilerplate ships with the SDK installed, the OAuth route handlers (`/api/auth/[...souped]`), and a proxy that's gated by the `SOUPED_AUTH_ENABLED` flag. Until you flip the switch AND list routes in `config.matcher`, every route is public.
+Auth is wired but **inactive by default**. The boilerplate ships with the SDK installed, the OAuth route handlers (`/api/auth/[...souped]`), and a proxy. The single switch is `config.matcher` in `src/proxy.ts` — with `matcher: []` (the default) the proxy doesn't run on any route, so everything is public. Populate `matcher` to start protecting routes.
 
-**Two knobs control auth in this app:**
-
-1. **`SOUPED_AUTH_ENABLED`** (env var) — turns the proxy on/off entirely.
-2. **`config.matcher` in `src/proxy.ts`** — declares WHICH routes the proxy runs on when it's on. The boilerplate default is an **empty array**, so even with the flag on, nothing is protected until you add routes.
-
-**The recommended path:** don't wire auth by hand. Run the `souped-auth-scaffolder` agent — it adds the Prisma `User` model, the lazy-sync helper, RBAC helpers, login/logout UI, and updates `config.matcher` for the routes you want to protect. See the orchestrator skill (`/souped`) for the full flow.
+**The recommended path:** don't wire auth by hand. Run the `souped-auth-scaffolder` agent — it enables auth on the Souped project, fills the env vars, adds the Prisma `User` model, the lazy-sync helper, RBAC helpers, login/logout UI, and populates `config.matcher` for the routes you want to protect. See the orchestrator skill (`/souped`) for the full flow.
 
 **If you do want to wire it manually**, here's the minimum:
 
-1. Create a Web App in the [Souped dashboard](https://souped.app). Copy `client_id`, `client_secret`, and the project id.
-2. Add the redirect URIs in Souped:
+1. Create a Web App in the [Souped dashboard](https://build.souped.app), or use `glaze_get_project_auth_setup` over MCP. The MCP tool returns a ready-to-copy `.env` snippet — prefer it over copying values by hand.
+2. Make sure auth is enabled on the project (`glaze_enable_project_auth(slug, enabled: true)`). New projects ship disabled.
+3. Add the redirect URIs in Souped (`glaze_update_redirect_uris`):
    - `http://localhost:3000/api/auth/callback` (dev)
    - `https://yourapp.com/api/auth/callback` (prod)
-3. In `.env.local`:
+4. In `.env.local`:
    ```env
-   SOUPED_AUTH_ENABLED=true
-   SOUPED_URL=https://souped.app
+   # Glaze auth API URL — value comes from `glaze_get_project_auth_setup`
+   # (or the dashboard). Never the marketing site, never the dashboard host.
+   SOUPED_URL=...
    SOUPED_CLIENT_ID=souped_client_xxx
    SOUPED_CLIENT_SECRET=souped_secret_xxx
-   SOUPED_PROJECT_ID=...
-   SOUPED_SESSION_SECRET=...   # openssl rand -base64 32
+   SOUPED_APP_ID=...                # Souped project UUID
+   SOUPED_SESSION_SECRET=...        # openssl rand -base64 32
    ```
-4. Edit `src/proxy.ts` and set `config.matcher` to the routes you want behind login. Examples:
+5. Edit `src/proxy.ts` and set `config.matcher` to the routes you want behind login. Examples:
    - **Specific routes:** `matcher: ["/admin/:path*", "/api/admin/:path*"]`
    - **Everything except static:** `matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"]`
-5. Restart the dev server.
-6. In Vercel, mirror the same env vars for each environment (production, preview).
+6. Restart the dev server.
+7. In Vercel, mirror the same env vars for each environment (production, preview).
 
-**Important — the loop trap:** if you set `SOUPED_AUTH_ENABLED=true` AND a matcher that covers every route, the OAuth callback (`/api/auth/callback`) is itself behind login, and the user ends up in a redirect loop. The boilerplate's matcher already excludes static assets; the OAuth routes are reachable because the proxy lets them through internally. But if you add additional cookie/CSRF checks of your own around `/api/auth/*`, make sure they don't block the login flow. When in doubt, protect specific routes, not everything.
+**Important — the loop trap:** if `matcher` covers every route, the OAuth callback (`/api/auth/callback`) is itself behind login, and the user ends up in a redirect loop. The SDK's proxy lets `/api/auth/*` through internally; just don't layer your own cookie/CSRF checks on top of it. When in doubt, protect specific routes, not everything.
 
-**How the flag works:** `src/proxy.ts` reads `SOUPED_AUTH_ENABLED` at module load. When `"true"`, it wraps the handler with `withSoupedAuth`. When anything else (or unset), it returns the passthrough handler. The proxy only runs on routes listed in `config.matcher` — that's a Next.js constraint, not ours.
+**How the matcher works:** `src/proxy.ts` always wraps the handler with `withSoupedAuth`, but the proxy only runs on routes listed in `config.matcher` (Next.js constraint). Empty matcher = proxy never runs = everything public.
 
-**Auth primitives available once enabled:**
+**Auth primitives available once routes are protected:**
 
 - `GET /api/auth/login` → starts OAuth redirect to Souped
 - `GET /api/auth/callback` → OAuth callback, sets session cookie
@@ -131,15 +128,66 @@ Auth is wired but **off by default**. The boilerplate ships with the SDK install
 
 ## Styling
 
-- Use Tailwind utility classes. No inline styles except when you need a CSS variable value that can't be expressed as a utility (see the landing page for examples).
+- Use Tailwind utility classes. No inline styles except when you need a CSS variable value that can't be expressed as a utility (the `Wf*` components have a few examples).
 - Souped brand tokens are in `src/app/globals.css` under `:root`:
   - `--souped-bg` (deep navy)
   - `--souped-ink` (warm white)
   - `--souped-accent` (orange `#FF6B35`)
   - `--souped-accent-alt`, `--souped-accent-warm`, `--souped-accent-blue`
   - `--souped-bg-elevated`, `--souped-bg-subtle`
-- Use Souped tokens for **marketing / landing** surfaces. Use shadcn tokens (`--primary`, `--background`, etc.) for **in-app** surfaces so dark mode and theme switches work.
+- Use Souped tokens for **branded marketing** surfaces. Use shadcn tokens (`--primary`, `--background`, etc.) for **in-app** surfaces so dark mode and theme switches work.
 - Do not edit `src/components/ui/*` by hand. Regenerate with `pnpm dlx shadcn@latest add <component>`.
+
+### Default look: wireframe components
+
+When the user asks for a new page or section and hasn't given visual direction ("agregame una página de pricing", "armá una vista para listar X"), reach for the wireframe components first. They are the Souped default look — navy + cyan + orange, framed boxes with `tag/desc` labels — and they ship with the boilerplate in `src/components/wireframe/`:
+
+| Component | What it is |
+|---|---|
+| `WfSection` | Labeled outer box. Every page chunk goes inside one. Takes `tag` + `desc`. |
+| `WfCard` | Title + body + action button. Use for feature grids, step lists, etc. |
+| `WfButton` | `primary` (cyan fill) or default (cyan outline). |
+| `WfPhoto` | Image placeholder with diagonal lines and an optional label. |
+| `WfNav` | Top nav with the Souped logo and an `Auth: off` pill. |
+| `WfLabelBar` | The `tag` + `desc` bar; used internally by `WfSection`, exposed for custom containers. |
+
+```tsx
+import { WfSection, WfCard, WfButton } from "@/components/wireframe";
+
+<WfSection tag="pricing" desc="3-tier card grid.">
+  <div className="grid grid-cols-3 gap-4">
+    <WfCard title="Starter" body="..." action="Choose" />
+    <WfCard title="Pro" body="..." action="Choose" />
+    <WfCard title="Team" body="..." action="Contact us" />
+  </div>
+</WfSection>
+```
+
+Reuse the `wf-*` utility classes (`wf-card`, `wf-grid`, `wf-tag`, etc.) and the `bg-wf-cyan` / `text-wf-orange` / `border-wf-cyan/30` Tailwind colors for one-off elements that don't fit a component.
+
+**When NOT to use them:** if the user has shared a design system, brand guidelines, mocks, or even just a clear visual direction ("hacelo minimalista en blanco y negro", "matchear con nuestra brand orange/black"), drop the wireframe look and build with shadcn/ui primitives + Tailwind. The wireframe is the *default*, not a mandate.
+
+#### Preview chrome
+
+`<WireframePreview>` wraps wireframe content in a sticky "Structure Preview" banner with a desktop/tablet/mobile switcher and a centered 1100-px-wide device frame. The boilerplate's `src/app/page.tsx` uses it by default so the landing arrives with that chrome out of the box.
+
+```tsx
+import { WireframePreview, WfSection, WfPhoto } from "@/components/wireframe";
+
+export default function Page() {
+  return (
+    <WireframePreview>
+      {(device) => (
+        <WfSection tag="hero" desc="..." compact={device === "mobile"}>
+          <WfPhoto height={device === "mobile" ? 200 : 340} />
+        </WfSection>
+      )}
+    </WireframePreview>
+  );
+}
+```
+
+When **not** to use `<WireframePreview>`: any page that the user actually ships to end users (dashboards, app screens, post-launch landings). The banner labels the page as a preview and is not appropriate in production. For those cases, render `Wf*` blocks directly and constrain the width yourself — `<div className="wf-grid min-h-screen pb-16"><div className="mx-auto max-w-275">…</div></div>` is a reasonable default so the content doesn't stretch edge-to-edge on wide screens.
 
 ---
 
@@ -160,7 +208,7 @@ Auth is wired but **off by default**. The boilerplate ships with the SDK install
 - **Import alias:** `@/*` → `src/*`. Use it for everything above `./`.
 - **Server actions** live in `src/actions/` with `"use server"` as the first line. Validate input with zod. Always return a tagged result (`{ ok: true, ... } | { ok: false, error }`), never throw to the client.
 - **API routes** live in `src/app/api/<name>/route.ts` and export `GET`, `POST`, etc. Use `NextResponse.json(...)`.
-- **Forms** use `react-hook-form` + zod for anything non-trivial. The sample `PingForm` uses `useTransition` for simplicity — copy that pattern for small forms.
+- **Forms** use `react-hook-form` + zod for anything non-trivial. For trivial forms, `useTransition` + a server action is enough — `src/actions/ping.ts` is the canonical example of the server action shape.
 - **Never commit `.env*` except `.env.example`.** The `.gitignore` enforces this.
 - **Never use the `any` type.** Use `unknown` and narrow.
 - **Branch naming:** `{author}/{ticket?}-{description}` — e.g. `pablo/PRE-1234-add-login`.
