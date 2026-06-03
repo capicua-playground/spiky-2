@@ -50,7 +50,7 @@ All decisions below are fixed. Do not swap them without explicit user approval.
 │   │   ├── layout.tsx
 │   │   └── page.tsx
 │   ├── components/
-│   │   ├── landing/      ← marketing surfaces — use Souped brand tokens
+│   │   ├── wireframe/    ← Wf* blocks (default Souped look) + SoupedLogo
 │   │   └── ui/           ← shadcn components — DO NOT edit, regenerate via CLI
 │   ├── generated/        ← Prisma client — gitignored, auto-generated
 │   ├── hooks/            ← custom React hooks
@@ -128,7 +128,7 @@ Auth is wired but **inactive by default**. The boilerplate ships with the SDK in
 
 ## Styling
 
-- Use Tailwind utility classes. No inline styles except when you need a CSS variable value that can't be expressed as a utility (see the landing page for examples).
+- Use Tailwind utility classes. No inline styles except when you need a CSS variable value that can't be expressed as a utility (the `Wf*` components have a few examples).
 - Souped brand tokens are in `src/app/globals.css` under `:root`:
   - `--souped-bg` (deep navy)
   - `--souped-ink` (warm white)
@@ -208,7 +208,7 @@ When **not** to use `<WireframePreview>`: any page that the user actually ships 
 - **Import alias:** `@/*` → `src/*`. Use it for everything above `./`.
 - **Server actions** live in `src/actions/` with `"use server"` as the first line. Validate input with zod. Always return a tagged result (`{ ok: true, ... } | { ok: false, error }`), never throw to the client.
 - **API routes** live in `src/app/api/<name>/route.ts` and export `GET`, `POST`, etc. Use `NextResponse.json(...)`.
-- **Forms** use `react-hook-form` + zod for anything non-trivial. The sample `PingForm` uses `useTransition` for simplicity — copy that pattern for small forms.
+- **Forms** use `react-hook-form` + zod for anything non-trivial. For trivial forms, `useTransition` + a server action is enough — `src/actions/ping.ts` is the canonical example of the server action shape.
 - **Never commit `.env*` except `.env.example`.** The `.gitignore` enforces this.
 - **Never use the `any` type.** Use `unknown` and narrow.
 - **Branch naming:** `{author}/{ticket?}-{description}` — e.g. `pablo/PRE-1234-add-login`.

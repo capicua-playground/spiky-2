@@ -10,4 +10,5 @@ export { WfSection } from "./wf-section";
 export { WfButton } from "./wf-button";
 export { WfCard } from "./wf-card";
 export { WfNav } from "./wf-nav";
+export { WfPingForm } from "./wf-ping-form";
 export { WireframePreview } from "./wireframe-preview";

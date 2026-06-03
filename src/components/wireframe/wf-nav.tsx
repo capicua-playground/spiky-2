@@ -1,9 +1,9 @@
-import { SoupedLogo } from "../landing/souped-logo";
+import { SoupedLogo } from "./souped-logo";
 
 export function WfNav() {
   return (
     <div
-      className="mx-2 mt-[3px] rounded-[5px] overflow-hidden border border-wf-cyan/30"
+      className="mx-2 mt-0.75 rounded-[5px] overflow-hidden border border-wf-cyan/30"
       style={{ background: "var(--wf-nav)" }}
     >
       <div className="flex items-center justify-between px-7 py-3.5">

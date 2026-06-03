@@ -2,9 +2,9 @@
 
 import {
   WfButton,
-  WfCard,
   WfNav,
   WfPhoto,
+  WfPingForm,
   WfSection,
   WireframePreview,
 } from "@/components/wireframe";
@@ -42,8 +42,8 @@ function LandingContent({ device }: { device: Device }) {
               Full stack, zero config. Auth is one env var away.
             </p>
             <div className="flex flex-wrap gap-2.5">
-              <WfButton label="Sign in with Souped" primary />
-              <WfButton label="Souped dashboard" />
+              <WfButton label="Sign in with Souped" primary href="/api/auth/login" />
+              <WfButton label="Souped dashboard" href="https://build.souped.app" />
             </div>
           </div>
           <div className={isMobile ? "w-full" : "w-[45%] shrink-0"}>
@@ -58,16 +58,32 @@ function LandingContent({ device }: { device: Device }) {
         compact={isMobile}
       >
         <div className={`grid gap-4 ${isMobile ? "grid-cols-1" : "grid-cols-2"}`}>
-          <WfCard
-            title="Server actions, ready to go"
-            body="Zod-validated, typed end-to-end. Drop your logic into src/actions/ and ship."
-            action="Try it"
-          />
-          <WfCard
-            title="API routes, zero setup"
-            body="A /api/health endpoint ships out of the box. Add yours in src/app/api/."
-            action="Open /api/health"
-          />
+          <div className="wf-card p-5">
+            <p className="text-lg font-bold text-white mb-2">Server actions, live demo</p>
+            <p className="text-sm text-white/55 leading-relaxed mb-5">
+              Zod-validated, typed end-to-end. The form below calls the
+              <code className="font-mono text-wf-cyan mx-1">ping</code>
+              action in <code className="font-mono text-wf-cyan">src/actions/ping.ts</code>.
+            </p>
+            <WfPingForm />
+          </div>
+          <div className="wf-card p-5 flex flex-col">
+            <p className="text-lg font-bold text-white mb-2">API routes, zero setup</p>
+            <p className="text-sm text-white/55 leading-relaxed mb-5">
+              A <code className="font-mono text-wf-cyan">GET /api/health</code> ships
+              out of the box. Add yours in <code className="font-mono text-wf-cyan">src/app/api/</code>.
+            </p>
+            <pre className="wf-card font-mono text-[11px] text-white/70 px-3 py-2 mb-5 overflow-x-auto leading-snug">
+{`{
+  "ok": true,
+  "service": "souped-boilerplate",
+  "timestamp": "..."
+}`}
+            </pre>
+            <div className="mt-auto">
+              <WfButton label="Open /api/health" href="/api/health" />
+            </div>
+          </div>
         </div>
       </WfSection>
 
@@ -75,7 +91,7 @@ function LandingContent({ device }: { device: Device }) {
         <div className={`grid gap-4 ${isMobile ? "grid-cols-1" : "grid-cols-4"}`}>
           {[
             { step: "01", cmd: "pnpm install", desc: "Install dependencies and generate the Prisma client" },
-            { step: "02", cmd: "cp .env.example .env.local", desc: "Copy the env template and fill in your DATABASE_URL" },
+            { step: "02", cmd: "cp .env.example .env.local", desc: "Copy the env template and fill in DATABASE_URL plus the SOUPED_* values if you want auth" },
             { step: "03", cmd: "pnpm prisma migrate dev", desc: "Run migrations once your database is up" },
             { step: "04", cmd: "pnpm dev", desc: "Start the dev server at localhost:3000" },
           ].map(({ step, cmd, desc }) => (

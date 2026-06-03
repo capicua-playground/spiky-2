@@ -206,7 +206,13 @@
   border-radius: 4px;
   font-weight: 700;
   letter-spacing: 0.03em;
-  cursor: default;
+  transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+a.wf-btn-primary:hover,
+button.wf-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+  box-shadow: 0 0 14px rgba(126, 200, 227, 0.35);
 }
 
 .wf-btn-secondary {
@@ -214,7 +220,13 @@
   border: 1.5px solid rgba(126,200,227,0.30);
   color: var(--wf-cyan);
   border-radius: 4px;
-  cursor: default;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+a.wf-btn-secondary:hover,
+button.wf-btn-secondary:hover:not(:disabled) {
+  background: rgba(126, 200, 227, 0.10);
+  border-color: rgba(126, 200, 227, 0.55);
 }
 
 @layer base {
