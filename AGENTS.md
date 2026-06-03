@@ -135,8 +135,57 @@ Auth is wired but **inactive by default**. The boilerplate ships with the SDK in
   - `--souped-accent` (orange `#FF6B35`)
   - `--souped-accent-alt`, `--souped-accent-warm`, `--souped-accent-blue`
   - `--souped-bg-elevated`, `--souped-bg-subtle`
-- Use Souped tokens for **marketing / landing** surfaces. Use shadcn tokens (`--primary`, `--background`, etc.) for **in-app** surfaces so dark mode and theme switches work.
+- Use Souped tokens for **branded marketing** surfaces. Use shadcn tokens (`--primary`, `--background`, etc.) for **in-app** surfaces so dark mode and theme switches work.
 - Do not edit `src/components/ui/*` by hand. Regenerate with `pnpm dlx shadcn@latest add <component>`.
+
+### Default look: wireframe components
+
+When the user asks for a new page or section and hasn't given visual direction ("agregame una página de pricing", "armá una vista para listar X"), reach for the wireframe components first. They are the Souped default look — navy + cyan + orange, framed boxes with `tag/desc` labels — and they ship with the boilerplate in `src/components/wireframe/`:
+
+| Component | What it is |
+|---|---|
+| `WfSection` | Labeled outer box. Every page chunk goes inside one. Takes `tag` + `desc`. |
+| `WfCard` | Title + body + action button. Use for feature grids, step lists, etc. |
+| `WfButton` | `primary` (cyan fill) or default (cyan outline). |
+| `WfPhoto` | Image placeholder with diagonal lines and an optional label. |
+| `WfNav` | Top nav with the Souped logo and an `Auth: off` pill. |
+| `WfLabelBar` | The `tag` + `desc` bar; used internally by `WfSection`, exposed for custom containers. |
+
+```tsx
+import { WfSection, WfCard, WfButton } from "@/components/wireframe";
+
+<WfSection tag="pricing" desc="3-tier card grid.">
+  <div className="grid grid-cols-3 gap-4">
+    <WfCard title="Starter" body="..." action="Choose" />
+    <WfCard title="Pro" body="..." action="Choose" />
+    <WfCard title="Team" body="..." action="Contact us" />
+  </div>
+</WfSection>
+```
+
+Reuse the `wf-*` utility classes (`wf-card`, `wf-grid`, `wf-tag`, etc.) and the `bg-wf-cyan` / `text-wf-orange` / `border-wf-cyan/30` Tailwind colors for one-off elements that don't fit a component.
+
+**When NOT to use them:** if the user has shared a design system, brand guidelines, mocks, or even just a clear visual direction ("hacelo minimalista en blanco y negro", "matchear con nuestra brand orange/black"), drop the wireframe look and build with shadcn/ui primitives + Tailwind. The wireframe is the *default*, not a mandate.
+
+#### Optional preview chrome
+
+`<WireframePreview>` wraps your wireframe content in a sticky "Structure Preview" banner with a desktop/tablet/mobile switcher and a device frame. Use it when you want a stakeholder to see how the layout reflows before any real styling lands; skip it (render `Wf*` blocks directly, as `src/app/page.tsx` does) when you only want the wireframe look without the preview UX.
+
+```tsx
+import { WireframePreview, WfSection, WfPhoto } from "@/components/wireframe";
+
+export default function Page() {
+  return (
+    <WireframePreview>
+      {(device) => (
+        <WfSection tag="hero" desc="..." compact={device === "mobile"}>
+          <WfPhoto height={device === "mobile" ? 200 : 340} />
+        </WfSection>
+      )}
+    </WireframePreview>
+  );
+}
+```
 
 ---
 
