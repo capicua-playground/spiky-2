@@ -1,33 +1,8 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useState } from "react";
 
 type Device = "desktop" | "tablet" | "mobile";
-
-const STORAGE_KEY = "wireframe-device";
-
-function isDevice(value: unknown): value is Device {
-  return value === "desktop" || value === "tablet" || value === "mobile";
-}
-
-// Subscribe to cross-tab updates so the device picker stays in sync
-// if the user has the boilerplate open in multiple tabs. Returns the
-// noop unsubscribe when running in the server snapshot path.
-function subscribeToDevice(callback: () => void): () => void {
-  if (typeof window === "undefined") return () => {};
-  window.addEventListener("storage", callback);
-  return () => window.removeEventListener("storage", callback);
-}
-
-function readDeviceFromStorage(): Device {
-  if (typeof window === "undefined") return "desktop";
-  try {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    return isDevice(stored) ? stored : "desktop";
-  } catch {
-    return "desktop";
-  }
-}
 
 function PreviewBanner({ device, setDevice }: { device: Device; setDevice: (d: Device) => void }) {
   return (
@@ -77,25 +52,7 @@ type WireframePreviewProps = {
  * without the chrome.
  */
 export function WireframePreview({ children }: WireframePreviewProps) {
-  // Persist the device choice across route changes via localStorage.
-  // useSyncExternalStore handles SSR (snapshot = "desktop") and keeps
-  // multiple tabs in sync via the storage event.
-  const device = useSyncExternalStore(
-    subscribeToDevice,
-    readDeviceFromStorage,
-    () => "desktop" as Device,
-  );
-
-  function setDevice(next: Device) {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, next);
-      // localStorage writes don't fire `storage` in the same tab, so
-      // dispatch a manual event to wake up useSyncExternalStore here.
-      window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY }));
-    } catch {
-      // ignore — failing to persist is non-critical.
-    }
-  }
+  const [device, setDevice] = useState<Device>("desktop");
 
   const isDesktop = device === "desktop";
   const frameWidth = isDesktop ? 1100 : device === "tablet" ? 768 : 390;
