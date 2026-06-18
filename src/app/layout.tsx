@@ -15,6 +15,17 @@ const jetBrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Souped Boilerplate",
   description: "A Next.js starter powered by the Souped stack.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.png", type: "image/png" },
+    ],
+    // No apple-touch-icon here — the boilerplate ships only the
+    // generic favicon. `brand-asset-manifest` adds a proper
+    // 180x180 apple-touch-icon when the design step generates
+    // brand assets for the project. iOS falls back to favicon.png
+    // until then.
+  },
 };
 
 export default function RootLayout({

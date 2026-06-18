@@ -39,10 +39,10 @@ function LandingContent({ device }: { device: Device }) {
               Start building.
             </h1>
             <p className="text-lg text-white/55 leading-relaxed mb-7">
-              Full stack, zero config. Auth is one env var away.
+              Full stack, zero config. Auth wired in from day one.
             </p>
             <div className="flex flex-wrap gap-2.5">
-              <WfButton label="Sign in with Souped" primary href="/api/auth/login" />
+              <WfButton label="Open the app" primary href="/app" />
               <WfButton label="Souped dashboard" href="https://build.souped.app" />
             </div>
           </div>
@@ -91,9 +91,9 @@ function LandingContent({ device }: { device: Device }) {
         <div className={`grid gap-6 ${isMobile ? "grid-cols-1" : "grid-cols-4"}`}>
           {[
             { step: "01", cmd: "pnpm install", desc: "Install dependencies and generate the Prisma client" },
-            { step: "02", cmd: "cp .env.example .env.local", desc: "Copy the env template and fill in DATABASE_URL plus the SOUPED_* values if you want auth" },
+            { step: "02", cmd: "cp .env.example .env.local", desc: "Copy the env template and fill DATABASE_URL plus the SOUPED_* values from glaze_get_project_auth_setup or the dashboard" },
             { step: "03", cmd: "pnpm prisma migrate dev", desc: "Run migrations once your database is up" },
-            { step: "04", cmd: "pnpm dev", desc: "Start the dev server at localhost:3000" },
+            { step: "04", cmd: "pnpm dev", desc: "Start the dev server at localhost:3000 — open / for the landing, /app for the authenticated shell" },
           ].map(({ step, cmd, desc }) => (
             <div key={step} className="wf-card p-5 flex flex-col gap-3">
               <span className="font-mono text-[28px] font-bold text-wf-cyan/30 leading-none">

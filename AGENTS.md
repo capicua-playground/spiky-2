@@ -46,18 +46,22 @@ All decisions below are fixed. Do not swap them without explicit user approval.
 │   │   ├── api/
 │   │   │   ├── auth/[...souped]/route.ts  ← Souped OAuth handlers
 │   │   │   └── health/route.ts            ← sample API route
+│   │   ├── app/                           ← authenticated app shell (`/app/*`)
+│   │   │   ├── layout.tsx                 ← SoupedProvider + noindex
+│   │   │   └── page.tsx                   ← `/app` home, replace with your UI
 │   │   ├── globals.css
 │   │   ├── layout.tsx
-│   │   └── page.tsx
+│   │   └── page.tsx                       ← public landing (`/`)
 │   ├── components/
 │   │   ├── wireframe/    ← Wf* blocks (default Souped look) + SoupedLogo
 │   │   └── ui/           ← shadcn components — DO NOT edit, regenerate via CLI
 │   ├── generated/        ← Prisma client — gitignored, auto-generated
 │   ├── hooks/            ← custom React hooks
 │   ├── lib/
+│   │   ├── auth.ts       ← `getCurrentSession()` — single entry point for reading the session
 │   │   ├── db.ts         ← PrismaClient singleton — always import from here
 │   │   └── utils.ts      ← shadcn cn() helper
-│   ├── proxy.ts          ← Next 16 proxy (auth gate — populate `config.matcher` to enable)
+│   ├── proxy.ts          ← Next 16 proxy (auth gate — default matcher protects `/app` and `/api/*` except `/api/auth/*`)
 │   └── types/
 │       └── index.ts      ← shared types barrel
 └── vitest.config.ts
@@ -65,46 +69,49 @@ All decisions below are fixed. Do not swap them without explicit user approval.
 
 ---
 
-## Enabling auth
+## Auth routing
 
-Auth is wired but **inactive by default**. The boilerplate ships with the SDK installed, the OAuth route handlers (`/api/auth/[...souped]`), and a proxy. The single switch is `config.matcher` in `src/proxy.ts` — with `matcher: []` (the default) the proxy doesn't run on any route, so everything is public. Populate `matcher` to start protecting routes.
+Auth is wired and **active by default**. The boilerplate ships with the SDK installed, the OAuth route handlers (`/api/auth/[...souped]`), the proxy, and a default route convention:
 
-**The recommended path:** don't wire auth by hand. Run the `souped-auth-scaffolder` agent — it enables auth on the Souped project, fills the env vars, adds the Prisma `User` model, the lazy-sync helper, RBAC helpers, login/logout UI, and populates `config.matcher` for the routes you want to protect. See the orchestrator skill (`/souped`) for the full flow.
+| Route | Auth | Purpose |
+| --- | --- | --- |
+| `/` | public | Marketing landing (`src/app/page.tsx`). Replace it with your real landing. |
+| `/app/:path*` | authenticated | Your app lives here. `src/app/app/layout.tsx` wraps with `SoupedProvider`. |
+| `/api/auth/*` | public | OAuth endpoints — NEVER cover them with the matcher (would loop the login). |
+| `/api/((?!auth).*)` | authenticated | Every other API route requires a session by default. |
 
-**If you do want to wire it manually**, here's the minimum:
+The matcher in `src/proxy.ts` is `["/app/:path*", "/api/((?!auth).*)"]`. Edit it only when you need a different shape (different segment, additional public API namespace, per-route protection).
+
+### Quickstart — make auth work end-to-end
+
+The boilerplate is functional out-of-the-box. To get a real OAuth flow running locally:
 
 1. Create a Web App in the [Souped dashboard](https://build.souped.app), or use `glaze_get_project_auth_setup` over MCP. The MCP tool returns a ready-to-copy `.env` snippet — prefer it over copying values by hand.
 2. Make sure auth is enabled on the project (`glaze_enable_project_auth(slug, enabled: true)`). New projects ship disabled.
 3. Add the redirect URIs in Souped (`glaze_update_redirect_uris`):
    - `http://localhost:3000/api/auth/callback` (dev)
    - `https://yourapp.com/api/auth/callback` (prod)
-4. In `.env.local`:
-   ```env
-   # Glaze auth API URL — value comes from `glaze_get_project_auth_setup`
-   # (or the dashboard). Never the marketing site, never the dashboard host.
-   SOUPED_URL=...
-   SOUPED_CLIENT_ID=souped_client_xxx
-   SOUPED_CLIENT_SECRET=souped_secret_xxx
-   SOUPED_APP_ID=...                # Souped project UUID
-   SOUPED_SESSION_SECRET=...        # openssl rand -base64 32
-   ```
-5. Edit `src/proxy.ts` and set `config.matcher` to the routes you want behind login. Examples:
-   - **Specific routes:** `matcher: ["/admin/:path*", "/api/admin/:path*"]`
-   - **Everything except static:** `matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"]`
-6. Restart the dev server.
-7. In Vercel, mirror the same env vars for each environment (production, preview).
+4. Copy `.env.example` to `.env.local` and fill the `SOUPED_*` values plus `SOUPED_SESSION_SECRET` (generate with `openssl rand -base64 32`).
+5. `pnpm install && pnpm dev` → open `/` (landing) and `/app` (will redirect to Souped login).
+6. In Vercel, mirror the same env vars for each environment (production, preview).
 
-**Important — the loop trap:** if `matcher` covers every route, the OAuth callback (`/api/auth/callback`) is itself behind login, and the user ends up in a redirect loop. The SDK's proxy lets `/api/auth/*` through internally; just don't layer your own cookie/CSRF checks on top of it. When in doubt, protect specific routes, not everything.
+### When to extend with `souped-auth-scaffolder`
 
-**How the matcher works:** `src/proxy.ts` always wraps the handler with `withSoupedAuth`, but the proxy only runs on routes listed in `config.matcher` (Next.js constraint). Empty matcher = proxy never runs = everything public.
+The boilerplate covers "auth + session cookie + a `/app` shell." If you need DB-backed users (Prisma `User` model synced from the JWT), role checks tied to a local table, or per-route protection beyond `/app`, run the `souped-auth-scaffolder` agent. It adds the `User` model + migration, the lazy-sync helper (`getCurrentUser` upsert), `requireUser`/`requireRole`, and tunes the matcher.
 
-**Auth primitives available once routes are protected:**
+For pure session-gating without per-user DB rows, the boilerplate alone is enough.
+
+### Loop trap
+
+Do not cover `/api/auth/*` with the matcher. The OAuth callback is itself an API route; if it's behind the proxy, the user ends in a redirect loop. The default matcher's negative lookahead (`/api/((?!auth).*)`) takes care of this — keep it intact.
+
+### Auth primitives
 
 - `GET /api/auth/login` → starts OAuth redirect to Souped
 - `GET /api/auth/callback` → OAuth callback, sets session cookie
 - `GET /api/auth/logout` → clears the session
-- `getSession()` from `@souped-tools/auth-nextjs` in server components/actions
-- `<SoupedProvider user={session}>` + `useSession()` in client components
+- `getCurrentSession()` from `@/lib/auth` (wraps `getSession()` from the SDK) in server components/actions
+- `<SoupedProvider user={session}>` is wired in `src/app/app/layout.tsx`; use `useSession()` from `@souped-tools/auth-nextjs/client` in any client component under `/app`
 
 **Do NOT try to roll your own auth.** If a requirement doesn't fit the Souped SDK, escalate to a human.
 
