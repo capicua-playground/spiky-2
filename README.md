@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Souped Boilerplate
 
-## Getting Started
+Next.js 16 + Tailwind v4 + shadcn/ui + Prisma 7 + Souped auth, wired and ready to go.
 
-First, run the development server:
+## Quickstart
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+cp .env.example .env.local
+# Fill DATABASE_URL and the SOUPED_* values (see .env.example for where to get them)
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **http://localhost:3000/** — public landing (placeholder; replace with your real one)
+- **http://localhost:3000/app** — authenticated app shell (redirects to Souped login if there is no session)
+- **http://localhost:3000/api/auth/login** — starts the OAuth flow directly
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Routing convention
 
-## Learn More
+| Route | Auth | Notes |
+| --- | --- | --- |
+| `/` | public | Landing — `src/app/page.tsx` |
+| `/app/:path*` | authenticated | App shell — `src/app/app/layout.tsx` + `page.tsx` |
+| `/api/auth/*` | public | OAuth endpoints — never gate these |
+| `/api/((?!auth).*)` | authenticated | Default API protection |
 
-To learn more about Next.js, take a look at the following resources:
+The proxy in `src/proxy.ts` enforces this. The Souped `auth-scaffolder` agent fine-tunes the matcher when you need per-route protection beyond the default.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## What's inside
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Next.js 16** App Router with Turbopack
+- **Tailwind v4** + **shadcn/ui** (Button, Card, Input, Label preinstalled)
+- **Prisma 7** with the new adapter-pg pattern (`src/lib/db.ts`)
+- **`@souped-tools/auth-nextjs`** — full OAuth flow, session cookies, `SoupedProvider` wired in `src/app/app/layout.tsx`
+- **Vitest** + React Testing Library, 70% coverage target
+- **ESLint 9** flat config + **Prettier** with the Tailwind plugin
 
-## Deploy on Vercel
+## Next steps
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Read `AGENTS.md` before editing — it captures the stack rules, conventions, and gotchas that agents (Claude, Cursor, …) and humans both need.

@@ -3,23 +3,23 @@ import { NextResponse } from "next/server";
 
 const passthrough = () => NextResponse.next();
 
-// Auth wraps every request that matches `config.matcher` below. With matcher: []
-// (the boilerplate default), the proxy doesn't run anywhere and every route is
-// public — useful while you're still wiring credentials or designing routes.
+// Auth runs on every request that matches `config.matcher` below.
 //
-// To turn auth on, populate matcher. Examples:
-//   - protect specific routes:   ["/admin/:path*", "/api/admin/:path*"]
-//   - protect everything except static assets:
-//     ["/((?!_next/static|_next/image|favicon.ico).*)"]
+// Default convention:
+//   - `/`                  → public landing
+//   - `/app/:path*`        → authenticated app
+//   - `/api/auth/*`        → OAuth endpoints (public, must NOT be matched
+//                             — covering them would loop the login flow)
+//   - `/api/<anything>`    → authenticated by default
 //
-// Be careful with the second pattern: covering /api/auth/* puts the OAuth
-// callback itself behind login and creates a redirect loop.
+// If you want to expose extra public API routes, add them to the negative
+// lookahead, e.g. `/api/((?!auth|public).*)`. If you want a different
+// app prefix (`/dashboard`, `/admin`, …), swap `/app` for that segment.
 //
-// If you scaffolded this app via the Souped orchestrator and asked for auth,
-// the auth-scaffolder agent fills `matcher` for you — don't edit it before
-// the agent runs.
+// The Souped auth-scaffolder agent tunes this matcher when it wires
+// per-route protection — only edit it manually if you know what you want.
 export const proxy = withSoupedAuth(passthrough);
 
 export const config = {
-  matcher: [],
+  matcher: ["/app/:path*", "/api/((?!auth).*)"],
 };
