@@ -40,3 +40,5 @@ The proxy in `src/proxy.ts` enforces this. The Souped `auth-scaffolder` agent fi
 ## Next steps
 
 Read `AGENTS.md` before editing — it captures the stack rules, conventions, and gotchas that agents (Claude, Cursor, …) and humans both need.
+
+Project-specific Souped decisions (auth scope, design contract, Chalk/Carte tables, Spark resources) live in [`SOUPED.md`](./SOUPED.md). Every Souped tool that runs against this project leaves a trace there.

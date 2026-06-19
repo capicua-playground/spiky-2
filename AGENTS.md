@@ -6,6 +6,16 @@ This file is the source of truth for any AI agent (Claude, Cursor, Copilot, etc.
 
 ---
 
+## Project context: read `SOUPED.md` first
+
+Before any Souped-related work (auth, design, Chalk, Carte, Spark, deploy), **read [`SOUPED.md`](./SOUPED.md) at the repo root**. It tracks every decision this project has made about the Souped suite, plus a Decisions log.
+
+Treat it as a **guide, not as ground truth**: it can drift. Before acting on a specific value from it, verify against the real source (Souped MCP, codebase, DB) and update the file in the same change if you find a mismatch. The full read / verify-before-acting / write rules are spelled out at the top of `SOUPED.md` itself.
+
+If `SOUPED.md` doesn't exist yet (older project that predates this convention), the `/souped` orchestrator creates an empty skeleton on its first run and records new decisions from there — it will **not** try to reconstruct history from the codebase.
+
+---
+
 ## The stack
 
 All decisions below are fixed. Do not swap them without explicit user approval.
