@@ -15,8 +15,8 @@ importers:
         specifier: ^7.8.0
         version: 7.8.0(prisma@7.8.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(magicast@0.5.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3))(typescript@5.9.3)
       '@souped-tools/auth-nextjs':
-        specifier: ^0.4.0
-        version: 0.4.0(next@16.2.7(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+        specifier: ^0.4.1
+        version: 0.4.1(next@16.2.7(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1638,8 +1638,8 @@ packages:
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
 
-  '@souped-tools/auth-nextjs@0.4.0':
-    resolution: {integrity: sha512-A2arL+K9xna5q3RMZRCZHBAbf6bQcK4z5dNsVSjVCAY1NapTjph6ycqC0kQ1bcJBeZ9vZSS9yZsh/ukl+pBgIw==}
+  '@souped-tools/auth-nextjs@0.4.1':
+    resolution: {integrity: sha512-xWBwNrtezSyjVrs4KdbmN9HvpNSWhXD3cBsvlB4WJshiFZU6dEvE3nm1bSzLY77nrv21WrwGxZqyIbrE8FH4cg==}
     peerDependencies:
       next: '>=15.0.0'
       react: '>=18.0.0'
@@ -6281,7 +6281,7 @@ snapshots:
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
-  '@souped-tools/auth-nextjs@0.4.0(next@16.2.7(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)':
+  '@souped-tools/auth-nextjs@0.4.1(next@16.2.7(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)':
     dependencies:
       jose: 6.2.2
       next: 16.2.7(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
