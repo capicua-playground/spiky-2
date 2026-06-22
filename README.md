@@ -21,12 +21,14 @@ Then open:
 
 | Route | Auth | Notes |
 | --- | --- | --- |
-| `/` | public | Landing — `src/app/page.tsx` |
+| `/` | public | Landing — `src/app/page.tsx` (listed in `publicRoutes`) |
 | `/app/:path*` | authenticated | App shell — `src/app/app/layout.tsx` + `page.tsx` |
-| `/api/auth/*` | public | OAuth endpoints — never gate these |
-| `/api/((?!auth).*)` | authenticated | Default API protection |
+| `/api/auth/*` | public | OAuth + site-password endpoints — always public (hard-coded by the SDK) |
+| anything else | authenticated by default | Add to `publicRoutes` in `src/proxy.ts` if it should be public |
 
-The proxy in `src/proxy.ts` enforces this. The Souped `auth-scaffolder` agent fine-tunes the matcher when you need per-route protection beyond the default.
+The proxy in `src/proxy.ts` enforces this via a wide matcher + `publicRoutes` allowlist. The wide matcher is necessary so the Souped site-password gate (an optional, Vercel-style shared password the project owner can enable from the Souped dashboard) can cover the entire site. The Souped `auth-scaffolder` agent fine-tunes `publicRoutes` when you need per-route protection beyond the default.
+
+**Webhooks gotcha**: if you add `/api/webhooks/stripe` (or any external-service callback), list it in `publicRoutes` — otherwise it'll redirect to login and fail in silence.
 
 ## What's inside
 
