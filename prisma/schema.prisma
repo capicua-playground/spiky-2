@@ -22,3 +22,27 @@ datasource db {
 }
 
 // Define your models below this line.
+
+model Notification {
+  id          String    @id @default(cuid())
+  userSub     String
+  workflowKey String
+  title       String
+  body        String
+  data        Json?
+  readAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([userSub, readAt])
+  @@index([userSub, createdAt])
+}
+
+model NotificationWorkflowConfig {
+  key               String   @id
+  label             String
+  description       String
+  availableChannels String[]
+  enabled           Boolean  @default(false)
+  channels          String[]
+  updatedAt         DateTime @updatedAt
+}
