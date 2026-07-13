@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
 import { getCurrentSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +8,13 @@ export async function GET(request: Request) {
   if (!session?.sub) {
     return NextResponse.json({ items: [], unreadCount: 0 }, { status: 401 });
   }
+
+  // Import the Prisma client lazily, only after we know there's a session.
+  // `@/lib/db` throws at module load when DATABASE_URL is unset — keeping the
+  // import inside the handler means `next build` can collect this route's page
+  // data without a database configured (a fresh clone with no .env.local still
+  // builds; the DB is only needed at request time).
+  const { db } = await import("@/lib/db");
 
   const since = new URL(request.url).searchParams.get("since");
   const sinceDate = since ? new Date(since) : null;
