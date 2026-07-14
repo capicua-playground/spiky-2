@@ -37,6 +37,8 @@ model Notification {
   @@index([userSub, createdAt])
 }
 
+// Souped-owned: managed by Souped via MCP. The `souped_` prefix marks it so —
+// do NOT alter its structure from the app; Souped administers the schema.
 model NotificationWorkflowConfig {
   key               String   @id
   label             String
@@ -45,4 +47,6 @@ model NotificationWorkflowConfig {
   enabled           Boolean  @default(false)
   channels          String[]
   updatedAt         DateTime @updatedAt
+
+  @@map("souped_notification_workflow_config")
 }
