@@ -33,6 +33,15 @@ export const proxy = withSoupedAuth(
   passthrough,
 );
 
+// The matcher stays wide (the site-password gate needs to cover the whole
+// site), but static assets MUST be excluded — otherwise a browser's parallel
+// request for the favicon runs through auth, gets captured as `return_to`, and
+// after login the user is redirected to e.g. `/favicon.svg`. Next serves the
+// app icon as `favicon.svg`/`favicon.png` (see app metadata), NOT `favicon.ico`,
+// so excluding only `favicon.ico` (the old value) let icon requests slip in.
+// Exclude every favicon/app-icon variant plus common static asset extensions.
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon\\.ico|favicon\\.svg|favicon\\.png|icon|apple-icon|manifest\\.webmanifest|.*\\.(?:ico|svg|png|jpg|jpeg|gif|webp|avif|txt|xml|woff2?)$).*)",
+  ],
 };
