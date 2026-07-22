@@ -17,11 +17,12 @@ It speeds up agents by pointing at what was done previously and where to look. B
 
 ## Project meta
 
-- **Name:** {{PROJECT_NAME}}
-- **SOUPED.md created on:** {{CREATED_DATE}}
-- **Repo URL:** {{REPO_URL}}
-- **Souped project ID:** _pending — fill when the Souped project is created_
-- **Workspace slug:** _pending_
+- **Name:** spiky-2
+- **SOUPED.md created on:** 2026-07-22
+- **Repo URL:** https://github.com/capicua-playground/spiky-2
+- **Souped project ID:** 575a573e-22e6-4813-a290-8e93c34bf89a
+- **Souped slug:** pj-pure-gate-G4vYtp
+- **Workspace slug:** ws-6ab14d0c85f7 (Lab Three)
 
 Anything else (Vercel project, primary domain, current auth scope, registered Chalk tables, Carte pages, Shelf buckets, design contract location, env-var names, etc.) lives in the Decisions log. Don't carve out subsystem sections here — let the log be the single timeline.
 
@@ -72,4 +73,13 @@ correction so future sessions see the current state.
 
 ### Entries
 
-- {{CREATED_DATE}} — meta — SOUPED.md initialized from boilerplate. Will track every Souped-suite decision on this project from now on.
+2026-07-22 — meta — SOUPED.md initialized from boilerplate. Will track every Souped-suite decision on this project from now on.
+2026-07-22 — scaffolder — Initial scaffold
+Cloned boilerplate for spiky-2. Landing page about being a software developer.
+Auth scope: none (public landing). Vercel: yes. Chalk: planned for editable sections.
+2026-07-22 — souped-mcp — Souped project created
+Project ID: 575a573e-22e6-4813-a290-8e93c34bf89a, slug: pj-pure-gate-G4vYtp
+2026-07-22 — spark — Vercel project created
+URL: https://spiky-2.dev.getsouped.app, dashboard: https://vercel.com/team_azdT0apffPTYjeELUIsU9x7S/spiky-2
+2026-07-22 — spark — Database provisioned
+Neon database: spark-764f3b0d-575a573e

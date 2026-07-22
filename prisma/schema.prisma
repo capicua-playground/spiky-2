@@ -23,6 +23,56 @@ datasource db {
 
 // Define your models below this line.
 
+// Chalk-editable content tables
+model HeroContent {
+  id          String @id @default(cuid())
+  headline    String @default("De principiante a desarrollador. El camino real.")
+  subtitle    String @default("Sin atajos, sin frameworks de moda. Solo fundamentos sólidos y código que funciona.")
+  ctaText     String @default("Empezar ahora")
+  ctaLink     String @default("#features")
+  updatedAt   DateTime @updatedAt
+}
+
+model Feature {
+  id          String @id @default(cuid())
+  icon        String @default("Code")
+  title       String @default("Fundamentos sólidos")
+  description String @default("Aprende los conceptos que no cambian, independientemente del framework de turno.")
+  order       Int    @default(0)
+  isActive    Boolean @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+model Step {
+  id          String @id @default(cuid())
+  number      Int    @default(1)
+  title       String @default("Aprende los conceptos")
+  description String @default("Domina la lógica, estructuras de datos y algoritmos.")
+  order       Int    @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id          String @id @default(cuid())
+  quote       String @default("Esta comunidad me ayudó a entender que ser desarrollador es sobre resolver problemas, no memorizar sintaxis.")
+  author      String @default("Alex Chen")
+  role        String @default("Backend Developer")
+  avatarUrl   String?
+  order       Int    @default(0)
+  isActive    Boolean @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+model CTABanner {
+  id          String @id @default(cuid())
+  title       String @default("¿Listo para empezar tu camino?")
+  subtitle    String @default("Únete a miles de desarrolladores que aprenden con nosotros.")
+  buttonText  String @default("Unirse ahora")
+  buttonLink  String @default("#")
+  updatedAt   DateTime @updatedAt
+}
+
+// Notification tables (boilerplate)
 model Notification {
   id          String    @id @default(cuid())
   userSub     String
