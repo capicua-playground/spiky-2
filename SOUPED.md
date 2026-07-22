@@ -83,3 +83,9 @@ Project ID: 575a573e-22e6-4813-a290-8e93c34bf89a, slug: pj-pure-gate-G4vYtp
 URL: https://spiky-2.dev.getsouped.app, dashboard: https://vercel.com/team_azdT0apffPTYjeELUIsU9x7S/spiky-2
 2026-07-22 — spark — Database provisioned
 Neon database: spark-764f3b0d-575a573e
+2026-07-22 — chalk — Registered content tables
+HeroContent (singleton), Feature (collection), Step (collection), Testimonial (collection), CTABanner (singleton)
+2026-07-22 — carte — Registered home page SEO
+Route: home (/), title and description set, sitemap priority 1.0
+2026-07-22 — spark — First deploy
+Vercel deployment triggered, target: production
